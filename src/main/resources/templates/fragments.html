@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <body>
+
+        <div th:fragment="copy">
+            &copy; 2011 The Good Thymes Virtual Grocery
+        </div>
+
+        <nav th:fragment="navbar" class="navbar" role="navigation" aria-label="main navigation">
+            <script type="text/javascript" src="js/ModalScript.js"></script>
+<!--            <script src="bulma-toast.min.js"></script>-->
+            <script type="text/javascript" src="js/toast/Notification.js"></script>
+            <link rel="stylesheet" href="css/toast/Notification.css">
+
+            <div class="navbar-brand">
+                <!--        <a class="navbar-item" href="https://bulma.io">-->
+                <a class="navbar-item" href="/home">
+                     <h2 th:text="#{home}"></h2>
+                </a>
+
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item">
+                        Home
+                    </a>
+
+                    <a class="navbar-item">
+                        Documentation
+                    </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            More
+                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item">
+                                About
+                            </a>
+                            <a class="navbar-item">
+                                Jobs
+                            </a>
+                            <a class="navbar-item">
+                                Contact
+                            </a>
+                            <hr class="navbar-divider">
+                            <a class="navbar-item">
+                                Report an issue
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item">
+
+                        <div class="buttons">
+                            <a class="button is-primary" th:href="@{/registration}" sec:authorize="!isAuthenticated()">
+                                <strong th:text="#{button.sign.up}"></strong>
+                            </a>
+                            <a class="button is-light" th:text="#{button.log.in}"
+                               th:href="@{/login}"
+                               sec:authorize="!isAuthenticated()"></a>
+                        </div>
+
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link" sec:authorize="isAuthenticated()" th:inline="text">
+                                [[${#httpServletRequest.remoteUser}]]
+                            </a>
+
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item">
+                                    About
+                                </a>
+                                <!-- Button trigger modal -->
+                                <a class="navbar-item js-modal-trigger" data-toggle="modal" data-target="modal-change-password"
+                                    th:text="#{menu.link.change.password}"
+                                   data-backdrop='static' data-keyboard='false'>
+                                </a>
+
+                                <!-- Modal Change Password -->
+                                <div class="modal hide fade" id="modal-change-password"
+                                     tabindex="-1" role="dialog" aria-labelledby="modal-change-password"
+                                     aria-hidden="true" data-keyboard="false" data-backdrop="static" href="#">
+
+                                    <!-- success message -->
+<!--                                    <div th:if="${param.success}">-->
+                                    <div th:if="${param.message2}">
+<!--                                        <div class="alert alert-info" th:text="#{message.success.updatePassword}"></div>-->
+                                        <div class="alert alert-info" th:text="${message2}"></div>
+                                    </div>
+                                    <!-- error message -->
+                                    <div th:if="${param.duplicateEmail}">
+                                        <div class="alert alert-info" th:text="#{message.error.updatePassword}"></div>
+                                    </div>
+
+                                    <div class="modal-background"></div>
+                                    <dic class="modal-card">
+                                        <form id="changePassword" name="changePassword" th:action="@{/updatePassword}" method="POST">
+                                            <input type="hidden" name="userEmail" th:value="${#httpServletRequest.remoteUser}">
+                                            <input type="hidden" name="getRequestURI" th:value="${#httpServletRequest.getRequestURI()}">
+                                            <input type="hidden" name="getQueryString" th:value="${#httpServletRequest.getQueryString()}">
+
+                                            <header class="modal-card-head">
+                                                <p class="modal-card-title" th:text="#{title.change.password} + ': ' + ${#httpServletRequest.remoteUser}"></p>
+                                                <button class="delete" aria-label="close" type="reset"></button>
+                                            </header>
+                                            <section class="modal-card-body">
+                                                <div class="field">
+                                                    <label class="label" th:text="#{label.old.password}"></label>
+                                                    <div class="control has-icons-left">
+                                                        <input type="password" placeholder="*******" name="oldPassword"
+                                                               class="input">
+                                                        <span class="icon is-small is-left">
+                                                            <i class="fa fa-lock"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="field">
+                                                    <label class="label" th:text="#{label.new.password}"></label>
+                                                    <div class="control has-icons-left">
+                                                        <input type="password" placeholder="*******" name="newPassword"
+                                                               class="input">
+                                                        <span class="icon is-small is-left">
+                                                            <i class="fa fa-lock"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="field">
+                                                    <label class="label" th:text="#{label.repeat.new.password}"></label>
+                                                    <div class="control has-icons-left">
+                                                        <input type="password" placeholder="*******" name="repeatNewPassword"
+                                                               class="input">
+                                                        <span class="icon is-small is-left">
+                                                            <i class="fa fa-lock"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                            <footer class="modal-card-foot">
+                                                <button class="button is-success" th:text="#{button.save.changes}" onclick="displayToast('Toast')"></button>
+                                                <button class="button" type="reset" th:text="#{button.cancel}"></button>
+                                            </footer>
+                                        </form>
+                                    </dic>
+                                </div>
+                                <!-- //Modal Change Password -->
+
+                                <a class="navbar-item" th:text="#{button.admin}"
+                                   th:href="@{/administration}"
+                                   sec:authorize="hasAuthority('ROLE_ADMIN')">
+                                </a>
+                                <hr class="navbar-divider">
+                                <a class="navbar-item" th:href="@{/logout}" sec:authorize="isAuthenticated()">
+                                    <span class="icon">
+                                        <i class="fa fa-arrow-right"></i>
+                                    </span>
+                                    <span th:text="#{button.log.out}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+
+        <nav th:fragment="folders" class="panel">
+            <p class="panel-heading" th:text="#{label.folders}"></p>
+            <a th:each="folder : ${folders}" class="panel-block is-active">
+                <span th:text="${folder.nameFolder}" style="margin-right:5px;"></span>
+                <form method="GET" action="/homeNote">
+                    <input type="hidden" name="folderId" th:value="${folder.id}">
+                    <button title="Show Notes" style="margin-right:5px;">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                    </button>
+                </form>
+                <form method="POST" action="/admin/folders/delete">
+                    <input type="hidden" name="folderId" th:value="${folder.id}">
+                    <button title="Delete Folder" th:disabled="!${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </a>
+        </nav>
+
+        <div th:fragment="notes">
+            <h1 class="title" th:text="${folderName}"></h1>
+            <div class="columns is-multiline">
+                <div class="column is-one-third" th:each="note : ${notes}">
+                    <div class="card">
+                        <header class="card-header">
+                            <div class="card-header-title" th:text="${note.title}">
+                                titolo
+                            </div>
+                        </header>
+                        <div class="card-content">
+                            <div class="content" th:text="${note.content}">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+                                <a href="#">#css</a> <a href="#">#responsive</a>
+                                <br>
+                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                            </div>
+                        </div>
+                        <footer class="card-footer" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                            <a th:href="@{/admin/notes/create ( status = view, noteId = ${note.id}, noteTitle = ${note.title}, noteContent = ${note.content}, folderId = ${note.folder.id} )}"
+                               class="card-footer-item">View</a>
+
+                            <a th:href="@{/admin/notes/create ( status = edit, noteId = ${note.id}, noteTitle = ${note.title}, noteContent = ${note.content}, folderId = ${note.folder.id} )}"
+                               class="card-footer-item">Edit</a>
+
+                            <a th:href="@{/admin/notes/delete ( noteId = ${note.id}, folderId = ${note.folder.id} )}"
+                               class="card-footer-item">Delete</a></a>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

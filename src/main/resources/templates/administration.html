@@ -1,0 +1,54 @@
+<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+
+    <div th:replace="fragments :: navbar"></div>
+
+    <section class="section is-medium">
+        <h1 class="title">List of Users</h1>
+<!--        <div class="columns">-->
+<!--            <div class="column is-half">-->
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th><abbr title="Position">Pos</abbr></th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Group</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sbUser, index : ${sbUsers}">
+                            <td th:text="${index.index + 1}"></td>
+                            <td th:text="${sbUser.firstName}"></td>
+                            <td th:text="${sbUser.lastName}"></td>
+                            <td th:text="${sbUser.email}"></td>
+                            <td th:text="${sbUser.sbGroup.authorities.grants}"></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+
+<!--            </div>-->
+
+<!--            <div class="column is-four-fifths">-->
+
+
+<!--            </div>-->
+<!--        </div>-->
+    </section>
+
+</body>
+</html>

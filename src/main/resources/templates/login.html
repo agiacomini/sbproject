@@ -1,0 +1,69 @@
+<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello Bulma!</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+    <body>
+        <section class="hero is-primary is-fullheight">
+            <div class="hero-body">
+                <div class="container">
+                    <div class="columns is-centered">
+                        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                            <!-- error message -->
+                            <div th:if="${param.error}">
+                                <div class="alert alert-danger" th:text="#{message.error.login}"></div>
+                            </div>
+                            <!-- logout message -->
+                            <div th:if="${param.logout}">
+                                <div class="alert alert-info" th:text="#{message.success.logout}"></div>
+                            </div>
+
+<!--                            <form action="login" class="box" method="POST" name="f" id="f">-->
+                            <form th:action="@{/login}" class="box" method="POST" name="formLogin" id="formLogin">
+                                <div class="field">
+                                    <label class="label" th:text="#{label.user.name}"></label>
+                                    <div class="control has-icons-left">
+                                        <input type="text" name="username" placeholder="User Name" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label" th:text="#{label.user.password}"></label>
+                                    <div class="control has-icons-left">
+                                        <input type="password" placeholder="*******" name="password" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="checkbox">
+                                        <input type="checkbox" style="margin-right:5px;"
+                                        th:text="#{checkbox.remember.me}">
+                                    </label>
+                                </div>
+                                <div class="field">
+                                    <button th:text="#{button.log.in}" class="button is-success"></button>
+                                </div>
+                                <div class="field">
+                                    <span th:text="#{message.new.user}" style="margin-right:5px;=">
+                                        <a th:href="@{/registration}" th:text="#{link.register.here}"></a>
+                                    </span>
+                                    <a th:href="@{/registration}" th:text="#{link.register.here}" class="has-text-link"></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

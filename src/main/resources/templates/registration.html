@@ -1,0 +1,101 @@
+<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello Bulma!</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+    <body>
+        <section class="hero is-primary is-fullheight">
+            <div class="hero-body">
+                <div class="container">
+                    <div class="columns is-centered">
+                        <div class="column is-6-tablet is-5-desktop is-4-widescreen">
+                            <!-- success message -->
+                            <div th:if="${param.success}">
+                                <div class="alert alert-info" th:text="#{message.success.registration}"></div>
+                            </div>
+                            <!-- error message -->
+                            <div th:if="${param.duplicateEmail}">
+                                <div class="alert alert-info" th:text="#{message.error.registration}"></div>
+                            </div>
+                            <div th:if="${param.emailPatternNotMatch}">
+                                <div class="alert alert-info" th:text="#{message.error.registration.emailNotMatch}"></div>
+                            </div>
+                            <form th:action="@{/registration}" class="box" method="POST" name="f" id="f" th:object="${sbUserDto}">
+                                <div class="field">
+                                    <label class="label" th:text="#{label.first.name}"></label>
+                                    <div class="control has-icons-left">
+                                        <input type="text" th:field="*{firstName}" name="firstname" placeholder="First Name" class="input" required autofocus>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label" th:text="#{label.last.name}"></label>
+                                    <div class="control has-icons-left has-icons-right">
+                                        <input type="text" th:field="*{lastName}" name="lastname" placeholder="Last Name" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+<!--                                        <span class="icon is-small is-right">-->
+<!--                                          <i class="fas fa-check"></i>-->
+<!--                                        </span>-->
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label" th:text="#{label.email}"></label>
+                                    <div class="control has-icons-left has-icons-right">
+                                        <input type="email" th:field="*{email}" name="email" placeholder="example@example.com"
+                                               class="input" data-validation="email" required onblur="ValidateEmail(email)">
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+<!--                                        <span class="icon is-small is-right">-->
+<!--                                          <i class="fas fa-exclamation-triangle"></i>-->
+<!--                                        </span>-->
+                                    </div>
+<!--                                    <p class="help is-danger">This email is invalid</p>-->
+                                </div>
+                                <div class="field">
+                                    <label class="label" th:text="#{label.user.password}"></label>
+                                    <div class="control has-icons-left">
+                                        <input type="password" th:field="*{password}" placeholder="*******" name="password" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label" th:text="#{label.group}"></label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select name="groupSelected" th:field="*{sbGroupDto.id}">
+                                                <option th:each="group : ${groups}"
+                                                        th:text="${group.groupName}"
+                                                        th:value="${group.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <button type="submit" th:text="#{button.sign.up}" class="button is-success" style="margin-right:5px;"></button>
+                                    <label th:text="#{message.already.registered}"></label>
+                                    <span>
+                                        <a th:text="#{link.log.in.here}" th:href="@{/login}" class="has-text-link"></a>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+
+    <div th:replace="fragments :: navbar"></div>
+
+    <section class="section">
+        <div class="columns">
+            <div class="column is-one-fifth">
+                <div class="columns">
+                    <div class="column is-full">
+                        <form method="POST" action="/admin/folder/create">
+                            <div class="field">
+                                <label class="label" th:text="#{home.welcome}"></label>
+                                <div class="control">
+                                    <input class="input" name="folderName" type="text" placeholder="Text input" required>
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button th:disabled="!${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+                                            class="button is-link"
+                                            th:text="#{button.folder.submit}">
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="column is-full">
+                    <div th:replace="fragments :: folders"></div>
+                </div>
+            </div>
+
+            <div class="column is-four-fifths">
+                <div class="column is-one-fifth">
+                    <a th:href="${#authorization.expression('hasRole(''ROLE_ADMIN'')') ? 'admin/notes/create?status=save' : '#'}"
+                       class="button is-light is-link" th:text="#{button.note.create}"
+                       th:disabled="!${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    </a>
+                </div>
+                <div class="column is-four-fifths"></div>
+                <div th:replace="fragments :: notes"></div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

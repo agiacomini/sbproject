@@ -1,0 +1,98 @@
+<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello Bulma!</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+    <body>
+        <div th:replace="fragments :: navbar"></div>
+        <section class="section">
+            <div class="columns">
+                <div class="column">
+        <!--            <form action="/notes/create" method="POST">-->
+                    <form action="/admin/notes/create" method="POST">
+
+                        <div class="field">
+                            <label class="label">Titolo</label>
+                            <div class="control">
+                                <input th:if="${status.equals('save')}"
+                                       class="input"
+                                       name="noteTitle"
+                                       type="text"
+                                       laceholder="Titolo della Nota"
+                                       required>
+                                <input th:if="${status.equals('edit')}"
+                                       class="input"
+                                       name="noteTitle"
+                                       type="text"
+                                       laceholder="Titolo della Nota"
+                                       required
+                                       th:value="${noteTitle}">
+                                <input th:if="${status.equals('view')}"
+                                       class="input"
+                                       name="noteTitle"
+                                       type="text"
+                                       laceholder="Titolo della Nota"
+                                       required
+                                       readonly
+                                       disabled
+                                       th:value="${noteTitle}">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Testo della Nota</label>
+                            <div class="control">
+                                <textarea class="textarea"
+                                          name="noteContent"
+                                          placeholder="Testo della Nota"
+                                          required
+                                          th:if="${status.equals('save')}"></textarea>
+                                <textarea class="textarea"
+                                          name="noteContent"
+                                          placeholder="Testo della Nota"
+                                          required
+                                          th:if="${status.equals('edit')}"
+                                          th:text="${noteContent}"></textarea>
+                                <textarea class="textarea"
+                                          name="noteContent"
+                                          placeholder="Testo della Nota"
+                                          required
+                                          readonly
+                                          disabled
+                                          th:if="${status.equals('view')}"
+                                          th:text="${noteContent}"></textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Cartella</label>
+                            <div class="control">
+                                <div class="select">
+                                    <input type="hidden" id="folderS" name="folderS" th:value="${folderId}">
+                                    <select name="folderSelected" th:disabled="${status.equals('view')}">
+                                        <option th:each="folder : ${folders}" th:text="${folder.nameFolder}" th:value="${folder.id}" th:selected="${folderId == folder.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="noteId" name="noteId" th:value="${noteId}">
+                        <div class="field is-grouped">
+                            <div class="control">
+        <!--                        <button class="button is-link" name="submit" value="submit" th:disabled="${status.equals('view')}">Submit</button>-->
+                                <button class="button is-link" name="submitStatus" th:value="${status}" th:disabled="${status.equals('view')}">Submit</button>
+                            </div>
+                            <div class="control">
+                                <button class="button is-link is-light" name="cancel" value="cancel" formnovalidate>Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
