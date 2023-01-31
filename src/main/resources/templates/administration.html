@@ -1,22 +1,21 @@
-<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-</head>
-<body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hello Bulma!</title>
+        <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+              rel="stylesheet">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
-    <div th:replace="fragments :: navbar"></div>
-
-    <section class="section is-medium">
-        <h1 class="title">List of Users</h1>
-<!--        <div class="columns">-->
-<!--            <div class="column is-half">-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+              rel="stylesheet">
+    </head>
+    <body>
+        <div th:replace="fragments :: navbar"></div>
+        <section class="section is-medium">
+            <h1 class="title">List of Users</h1>
                 <table class="table is-fullwidth">
                     <thead>
                         <tr>
@@ -35,20 +34,36 @@
                             <td th:text="${sbUser.lastName}"></td>
                             <td th:text="${sbUser.email}"></td>
                             <td th:text="${sbUser.sbGroup.authorities.grants}"></td>
-                            <td></td>
+                            <td>
+                                <form th:action="@{/administration}" method="POST">
+                                    <input type="hidden" th:name="id" th:value="${sbUser.id}">
+                                    <input type="hidden" th:name="email" th:value="${sbUser.email}">
+                                    <button title="Delete User">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
+                        <div th:if="!${#strings.isEmpty(sbUserDelete)}">
+                            <script type="text/javascript">
+                                switch( "[[${sbUserDelete}]]" ){
+                                    case "success":
+                                        openToastrSuccess("[[#{message.success.sbUserDelete}]]")
+                                        break;
+                                    case "error":
+                                        openToastrError("[[#{message.error.sbUserDelete}]]")
+                                        break;
+                                }
+                            </script>
+                        </div>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                                console.log([[${sbUserDelete}]]);
+                            /*]]>*/
+                        </script>
                     </tbody>
                     <tfoot></tfoot>
                 </table>
-
-<!--            </div>-->
-
-<!--            <div class="column is-four-fifths">-->
-
-
-<!--            </div>-->
-<!--        </div>-->
-    </section>
-
-</body>
+        </section>
+    </body>
 </html>
