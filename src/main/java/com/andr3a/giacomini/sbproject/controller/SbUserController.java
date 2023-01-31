@@ -9,22 +9,14 @@ import com.andr3a.giacomini.sbproject.utils.Email;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Optional;
-
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 @Controller
 //@RequestMapping("/registration")
@@ -33,9 +25,10 @@ public class SbUserController {
     private SbUserService sbUserService;
     @Autowired
     private SbGroupService sbGroupService;
-
     @Autowired
     private Logger log;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @ModelAttribute("sbUserDto")
     public SbUserDto userRegistrationDto(){
@@ -74,15 +67,15 @@ public class SbUserController {
     }
 
     @PostMapping("/updatePassword")
-    public String updateUserPassword(@ModelAttribute("userEmail") String userEmail,
+    public String updateSbUserPassword(@ModelAttribute("userEmail") String userEmail,
                                      @ModelAttribute("getRequestURI") String requestedURI,
                                      @ModelAttribute("getQueryString") String queryString,
                                      @ModelAttribute("oldPassword") String oldPassword,
                                      @ModelAttribute("newPassword") String newPassword,
                                      @ModelAttribute("repeatNewPassword") String repeatNewPassword,
-                                     Model model,
-                                     RedirectAttributes redirAttrs){
+                                     Model model, RedirectAttributes ra){
 
+        log.trace("START updateSbUserPassword() - sbUser: " + userEmail);
         StringBuilder sb = new StringBuilder("redirect:" + requestedURI);
         sb.append(Utils.isNotNullAndNotTrimmedEmpty(queryString) ? "?" + queryString : "");
 
@@ -91,40 +84,36 @@ public class SbUserController {
             SbUser sbUser = sbUserService.findSbUserByEmail(userEmail);
 
             if( !(sbUser != null) ){
-                if( !(sbUser.getUserPassword().equals(oldPassword)) ){
-                    log.error("Old Password not match");
-//                    return "Old Password not match";
-//                    return new ResponseEntity(HttpStatus.NOT_FOUND);
-
-                    redirAttrs.addFlashAttribute("message", "This is message from flash");
-                    redirAttrs.addFlashAttribute("message", "message");
-                    redirAttrs.addAttribute("message2", "message2");
-                    model.addAttribute("messageAdd", "messageAdd");
-
-//                    return "redirect:" + requestedURI + "?" + queryString;
-                    return sb.toString();
-                }
+                log.error("User not found");
+                model.addAttribute("passwordUpdate", "User not found");
+                return sb.toString();
+            }
+            // Check Old Password
+            if( !(Utils.checkUserPassword(oldPassword, sbUser.getUserPassword(), bCryptPasswordEncoder) )){
+                log.error("Old Password not match");
+                ra.addFlashAttribute("passwordUpdate", "errorOldPassword");
+                return sb.toString();
             }
 
-            redirAttrs.addAttribute("message2", "message from message2");
-            model.addAttribute("messageAdd", "messageAdd");
+            // Match "New Password" with "Repeat New Password"
+            if( !(newPassword.equals(repeatNewPassword)) ){
+                log.error("New Password and Repeat New Password not match");
+//                model.addAttribute("passwordUpdate", "New Password and Repeat New Password not match");
+                ra.addFlashAttribute("passwordUpdate", "errorMismatch");
+                return sb.toString();
+            }
 
-//            return "redirect:" + requestedURI + "?" + queryString;
-            return sb.toString();
-
-
+            sbUserService.updateSbUserPassword(sbUser, bCryptPasswordEncoder.encode(newPassword));
+            log.info("sbUser: " + userEmail + " PASSWORD UPDATED SUCCESSFULLY");
+            ra.addFlashAttribute("passwordUpdate", "success");
 
         } catch (Exception exception){
-//            return "exception";
-//            return new ResponseEntity(HttpStatus.EXPECTATION_FAILED);
+            log.error(exception.getMessage());
+            log.error("sbUser: " + userEmail + " ERROR UPDATE");
+            model.addAttribute("passwordUpdate", "error");
         }
-        // Check Old Password
 
-        // Match "New Password" with "Repeat New Password"
-//        return "redirect:/registration?success";
-        redirAttrs.addFlashAttribute("message", "This is message from flash");
-
-//        return "redirect:" + requestedURI + "?" + queryString;
+        log.trace("END updateSbUserPassword() - sbUser: " + userEmail);
         return sb.toString();
     }
 }

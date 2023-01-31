@@ -55,6 +55,9 @@ public class SbGroup {
     @JoinColumn(name = "authorities", referencedColumnName = "id")
     private Authorities authorities;
 
+    public Authorities getAuthorities() { return authorities; }
+    public void setAuthorities(Authorities authorities) { this.authorities = authorities; }
+
 //    @Override
 //    public String toString() {
 //        return "SbGroup{" +

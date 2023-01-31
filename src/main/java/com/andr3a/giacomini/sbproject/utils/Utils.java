@@ -1,5 +1,7 @@
 package com.andr3a.giacomini.sbproject.utils;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.Comparator;
 
 public class Utils {
@@ -42,5 +44,13 @@ public class Utils {
         if ( t1 == null && t2 == null ) return true ;
         if ( t1 == null || t2 == null ) return false ;
         return t1.equals( t2 ) ;
+    }
+
+    //- PASSWORD
+    public static boolean checkUserPassword(String password,
+                                            String userPassword,
+                                            PasswordEncoder passwordEncoder){
+        // PasswordEncoder like BCryptPasswordEncoder
+        return passwordEncoder.matches(password, userPassword);
     }
 }

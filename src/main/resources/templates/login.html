@@ -1,4 +1,3 @@
-<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
@@ -23,8 +22,6 @@
                             <div th:if="${param.logout}">
                                 <div class="alert alert-info" th:text="#{message.success.logout}"></div>
                             </div>
-
-<!--                            <form action="login" class="box" method="POST" name="f" id="f">-->
                             <form th:action="@{/login}" class="box" method="POST" name="formLogin" id="formLogin">
                                 <div class="field">
                                     <label class="label" th:text="#{label.user.name}"></label>

@@ -36,7 +36,8 @@ public class FolderService {
 
     public ResponseEntity deleteFolderByFolderId(Long folderId){
 
-        log.info("deleteFolderByFolderId() - " + folderRepository.findById(folderId).orElseThrow().toString() );
+//        log.info("deleteFolderByFolderId() - " + folderRepository.findById(folderId).orElseThrow().toString() );
+        log.info("deleteFolderByFolderId() - " + folderRepository.findById(folderId).toString() );
         folderRepository.deleteById(folderId);
         return ResponseEntity.ok().build();
     }

@@ -27,12 +27,16 @@ public class Authorities{
     private String createdBy;
     @Column(name = "lastupdate")
     private Date lastUpdate;
+
     @Column(name = "lastupdateby")
     private String lastUpdateBy;
 
     @OneToOne(mappedBy = "authorities")
     @ToString.Exclude
     private SbGroup sbGroup;
+
+    public String getGrants() { return grants; }
+    public void setGrants(String grants) { this.grants = grants; }
 
 //    @Override
 //    public String toString() {

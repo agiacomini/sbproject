@@ -26,6 +26,8 @@ public class NoteController {
                                  @RequestParam (name = "noteTitle", required = false) String noteTitle,
                                  @RequestParam (name = "noteContent", required = false) String noteContent,
                                  @RequestParam (name = "folderId", required = false) Long folderId,
+                                 @ModelAttribute("getRequestURI") String requestedURI,
+                                 @ModelAttribute("getQueryString") String queryString,
                                  Model model){
         model.addAttribute("folders", folderService.findFolders());
         model.addAttribute("status", status);
@@ -52,7 +54,8 @@ public class NoteController {
             if(submitStatus != null && !submitStatus.isEmpty() && submitStatus.equals(Constants.STATUS_EDIT))
                 noteService.updateNoteByNoteId(noteId, new Note(noteTitle, noteContent, new Folder(folderId)));
             else{
-                Folder folder = folderService.findFolderById(folderId).orElseThrow();
+//                Folder folder = folderService.findFolderById(folderId).orElseThrow();
+                Folder folder = folderService.findFolderById(folderId).orElseThrow(RuntimeException::new);
                 Note newNote = new Note(noteTitle, noteContent, folder);
                 noteService.saveNote(newNote);
             }
@@ -60,7 +63,8 @@ public class NoteController {
 
         if(folderId != null || folderS != null)
             return "redirect:/homeByFolder?folderId=" + (folderId != null ? folderId : folderS);
-        return "redirect:/home";
+//        return "redirect:/home";
+        return "index";
     }
 
     @GetMapping("/admin/notes/delete")
@@ -68,7 +72,8 @@ public class NoteController {
                           @RequestParam("folderId") Long folderId,
                           Model model){
         log.trace("START deleteNoteById()");
-        Note noteToDelete = noteService.getNoteById(noteId).orElseThrow();
+//        Note noteToDelete = noteService.getNoteById(noteId).orElseThrow();
+        Note noteToDelete = noteService.getNoteById(noteId).orElseThrow(RuntimeException::new);
         log.info("deleteNoteById() - " + noteToDelete.toString() );
         noteService.deleteNote(noteToDelete);
 

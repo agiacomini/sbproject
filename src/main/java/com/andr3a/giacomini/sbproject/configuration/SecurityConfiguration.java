@@ -30,14 +30,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+
         http.authorizeRequests()
                 .antMatchers("/admin").hasRole(Constants.ROLE_ADMIN)
                 .antMatchers("/admin/**").hasRole(Constants.ROLE_ADMIN)
+                .antMatchers("/administration").hasRole(Constants.ROLE_ADMIN)
                 .antMatchers("/").permitAll()
                 .and().formLogin()
                 .loginPage("/login")
                 .and().csrf().disable()
-                // Aggiunte DOPO
+                // Aggiunte DOP
                 .logout()
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)

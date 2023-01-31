@@ -42,6 +42,11 @@ public class SbUserService implements UserDetailsService {
 
     public Iterable<SbUser> getAllUsers(){ return sbUserRepository.findAll(); }
 
+    public void deleteSbUserById(long sbUserId){
+        sbUserRepository.deleteById(sbUserId);
+
+    }
+
     public SbUser saveSbUser(SbUserDto sbUserDto) throws SQLIntegrityConstraintViolationException {
 
         SbUser sbUser = new SbUser.Builder(sbUserDto.getEmail(), new SbGroup(sbUserDto.getSbGroupDto().getId()))
@@ -53,28 +58,28 @@ public class SbUserService implements UserDetailsService {
         return sbUserRepository.save(sbUser);
     }
 
-//    public Optional<SbUser> findSbUserByEmail(String email){
-//        return sbUserRepository.findSbUser2ByEmail(email);
-//    }
     public SbUser findSbUserByEmail(String email){
         return sbUserRepository.findSbUser2ByEmail(email);
+    }
+
+    public void updateSbUserPassword(SbUser sbUser, String newPassword){
+        sbUserRepository.updateSbUsersPasswordByEmail(
+                sbUser.getEmail(),
+                newPassword);
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-//        Optional<SbUser> sbUser = sbUserRepository.findSbUser2ByEmail(userName);
         SbUser sbUser = sbUserRepository.findSbUser2ByEmail(userName);
         if(sbUser == null){
             throw new UsernameNotFoundException("Invalid username or password");
         }
 
         List<Authorities> list = new ArrayList<Authorities>();
-//        list.add(sbUser.get().getSbGroup().getAuthorities());
         list.add(sbUser.getSbGroup().getAuthorities());
 
-//        User user = new User(sbUser.get().getEmail(), sbUser.get().getUserPassword(), mapRolesToAuthority(list));
         User user = new User(sbUser.getEmail(), sbUser.getUserPassword(), mapRolesToAuthority(list));
 
         return user;

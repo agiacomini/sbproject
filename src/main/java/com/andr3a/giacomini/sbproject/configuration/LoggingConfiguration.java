@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class LoggingConfiguration {
     @Bean
     public Logger log() {
-        var log = LoggerFactory.getLogger("com.andr3a.giacomini.sbproject");
+        Logger log = LoggerFactory.getLogger("com.andr3a.giacomini.sbproject");
         return log;
     }
 }

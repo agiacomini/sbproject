@@ -1,4 +1,3 @@
-<!--<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">-->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
@@ -10,15 +9,16 @@
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     </head>
     <body>
+
         <div th:replace="fragments :: navbar"></div>
         <section class="section">
             <div class="columns">
                 <div class="column">
-        <!--            <form action="/notes/create" method="POST">-->
                     <form action="/admin/notes/create" method="POST">
-
                         <div class="field">
-                            <label class="label">Titolo</label>
+                            <label class="label">
+                                Titolo
+                            </label>
                             <div class="control">
                                 <input th:if="${status.equals('save')}"
                                        class="input"
@@ -45,7 +45,9 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">Testo della Nota</label>
+                            <label class="label">
+                                Testo della Nota
+                            </label>
                             <div class="control">
                                 <textarea class="textarea"
                                           name="noteContent"
@@ -69,12 +71,15 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">Cartella</label>
+                            <label class="label">
+                                Cartella
+                            </label>
                             <div class="control">
                                 <div class="select">
                                     <input type="hidden" id="folderS" name="folderS" th:value="${folderId}">
                                     <select name="folderSelected" th:disabled="${status.equals('view')}">
-                                        <option th:each="folder : ${folders}" th:text="${folder.nameFolder}" th:value="${folder.id}" th:selected="${folderId == folder.id}">
+                                        <option th:each="folder : ${folders}" th:text="${folder.nameFolder}"
+                                                th:value="${folder.id}" th:selected="${folderId == folder.id}">
                                         </option>
                                     </select>
                                 </div>
@@ -83,11 +88,16 @@
                         <input type="hidden" id="noteId" name="noteId" th:value="${noteId}">
                         <div class="field is-grouped">
                             <div class="control">
-        <!--                        <button class="button is-link" name="submit" value="submit" th:disabled="${status.equals('view')}">Submit</button>-->
-                                <button class="button is-link" name="submitStatus" th:value="${status}" th:disabled="${status.equals('view')}">Submit</button>
+                                <button class="button is-link" name="submitStatus"
+                                        th:value="${status}" th:disabled="${status.equals('view')}"
+                                        th:text="#{button.form.submit}">
+                                </button>
                             </div>
                             <div class="control">
-                                <button class="button is-link is-light" name="cancel" value="cancel" formnovalidate>Cancel</button>
+                                <button class="button is-link is-light" name="cancel"
+                                        value="cancel" formnovalidate
+                                        th:text="#{button.cancel}">
+                                </button>
                             </div>
                         </div>
                     </form>

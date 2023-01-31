@@ -50,7 +50,8 @@ public class NoteService {
     public Note updateNoteByNoteId(Long noteId, Note noteDto){
 
         log.trace("START updateNoteByNoteId()");
-        Note noteToUpdate = noteRepository.findById(noteId).orElseThrow();
+//        Note noteToUpdate = noteRepository.findById(noteId).orElseThrow();
+        Note noteToUpdate = noteRepository.findById(noteId).orElseThrow(RuntimeException::new);
         log.info("Note BEFORE - " + noteToUpdate.toString() );
 
         noteToUpdate.setTitle(noteDto.getTitle() != null && !noteDto.getTitle().isEmpty() ? noteDto.getTitle() : "");
@@ -67,7 +68,8 @@ public class NoteService {
 
     public ResponseEntity deleteNoteById(Long noteId){
 
-        log.info("deleteNoteById() - " + noteRepository.findById(noteId).orElseThrow().toString() );
+//        log.info("deleteNoteById() - " + noteRepository.findById(noteId).orElseThrow().toString() );
+        log.info("deleteNoteById() - " + noteRepository.findById(noteId).orElseThrow(RuntimeException::new).toString() );
         noteRepository.deleteById(noteId);
         return ResponseEntity.ok().build();
     }

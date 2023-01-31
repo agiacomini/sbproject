@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+              rel="stylesheet">
+    </head>
+
     <body>
 
         <div th:fragment="copy">
@@ -8,39 +14,42 @@
         </div>
 
         <nav th:fragment="navbar" class="navbar" role="navigation" aria-label="main navigation">
-            <script type="text/javascript" src="js/ModalScript.js"></script>
-<!--            <script src="bulma-toast.min.js"></script>-->
-            <script type="text/javascript" src="js/toast/Notification.js"></script>
-            <link rel="stylesheet" href="css/toast/Notification.css">
+
+            <!-- jQuery Is Required For Bootstrap 4 -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <!-- Toastr: Script file and CSS stylesheet -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"
+                    type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+                    type="text/stylesheet"></script>
+            <script th:src="@{/js/ModalScript.js}"
+                    type="text/javascript"></script>
+            <script th:src="@{/js/toast/OpenToastr.js}"
+                    type="text/javascript"></script>
 
             <div class="navbar-brand">
-                <!--        <a class="navbar-item" href="https://bulma.io">-->
                 <a class="navbar-item" href="/home">
                      <h2 th:text="#{home}"></h2>
                 </a>
-
-                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                   data-target="navbarBasicExample">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
             </div>
-
             <div id="navbarBasicExample" class="navbar-menu">
                 <div class="navbar-start">
                     <a class="navbar-item">
                         Home
                     </a>
-
                     <a class="navbar-item">
                         Documentation
                     </a>
-
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link">
                             More
                         </a>
-
                         <div class="navbar-dropdown">
                             <a class="navbar-item">
                                 About
@@ -58,66 +67,62 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="navbar-end">
                     <div class="navbar-item">
-
                         <div class="buttons">
-                            <a class="button is-primary" th:href="@{/registration}" sec:authorize="!isAuthenticated()">
+                            <a class="button is-primary" th:href="@{/registration}"
+                               sec:authorize="!isAuthenticated()">
                                 <strong th:text="#{button.sign.up}"></strong>
                             </a>
                             <a class="button is-light" th:text="#{button.log.in}"
                                th:href="@{/login}"
                                sec:authorize="!isAuthenticated()"></a>
                         </div>
-
                         <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link" sec:authorize="isAuthenticated()" th:inline="text">
+                            <a class="navbar-link" sec:authorize="isAuthenticated()"
+                               th:inline="text">
                                 [[${#httpServletRequest.remoteUser}]]
                             </a>
-
                             <div class="navbar-dropdown">
                                 <a class="navbar-item">
                                     About
                                 </a>
-                                <!-- Button trigger modal -->
-                                <a class="navbar-item js-modal-trigger" data-toggle="modal" data-target="modal-change-password"
-                                    th:text="#{menu.link.change.password}"
+                                <!-- Button trigger "Modal Change Password" -->
+                                <a class="navbar-item js-modal-trigger" data-toggle="modal"
+                                   data-target="modal-change-password" th:text="#{menu.link.change.password}"
                                    data-backdrop='static' data-keyboard='false'>
                                 </a>
-
                                 <!-- Modal Change Password -->
                                 <div class="modal hide fade" id="modal-change-password"
                                      tabindex="-1" role="dialog" aria-labelledby="modal-change-password"
-                                     aria-hidden="true" data-keyboard="false" data-backdrop="static" href="#">
-
-                                    <!-- success message -->
-<!--                                    <div th:if="${param.success}">-->
-                                    <div th:if="${param.message2}">
-<!--                                        <div class="alert alert-info" th:text="#{message.success.updatePassword}"></div>-->
-                                        <div class="alert alert-info" th:text="${message2}"></div>
-                                    </div>
-                                    <!-- error message -->
-                                    <div th:if="${param.duplicateEmail}">
-                                        <div class="alert alert-info" th:text="#{message.error.updatePassword}"></div>
-                                    </div>
-
+                                     aria-hidden="true" data-keyboard="false" data-backdrop="static"
+                                     href="#">
                                     <div class="modal-background"></div>
-                                    <dic class="modal-card">
-                                        <form id="changePassword" name="changePassword" th:action="@{/updatePassword}" method="POST">
-                                            <input type="hidden" name="userEmail" th:value="${#httpServletRequest.remoteUser}">
-                                            <input type="hidden" name="getRequestURI" th:value="${#httpServletRequest.getRequestURI()}">
-                                            <input type="hidden" name="getQueryString" th:value="${#httpServletRequest.getQueryString()}">
+                                    <div class="modal-card">
+                                        <form id="changePassword" name="changePassword"
+                                              th:action="@{/updatePassword}" method="POST">
+                                            <input type="hidden" name="userEmail"
+                                                   th:value="${#httpServletRequest.remoteUser}">
+                                            <input type="hidden" name="getRequestURI"
+                                                   th:value="${#httpServletRequest.getRequestURI()}">
+                                            <input type="hidden" name="getQueryString"
+                                                   th:value="${#httpServletRequest.getQueryString()}">
 
                                             <header class="modal-card-head">
-                                                <p class="modal-card-title" th:text="#{title.change.password} + ': ' + ${#httpServletRequest.remoteUser}"></p>
-                                                <button class="delete" aria-label="close" type="reset"></button>
+                                                <p class="modal-card-title"
+                                                   th:text="#{title.change.password} + ': ' + ${#httpServletRequest.remoteUser}">
+                                                </p>
+                                                <button class="delete" aria-label="close" type="reset">
+                                                </button>
                                             </header>
                                             <section class="modal-card-body">
                                                 <div class="field">
-                                                    <label class="label" th:text="#{label.old.password}"></label>
+                                                    <label class="label"
+                                                           th:text="#{label.old.password}">
+                                                    </label>
                                                     <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******" name="oldPassword"
+                                                        <input type="password" placeholder="*******"
+                                                               name="oldPassword"
                                                                class="input">
                                                         <span class="icon is-small is-left">
                                                             <i class="fa fa-lock"></i>
@@ -125,9 +130,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="field">
-                                                    <label class="label" th:text="#{label.new.password}"></label>
+                                                    <label class="label"
+                                                           th:text="#{label.new.password}">
+                                                    </label>
                                                     <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******" name="newPassword"
+                                                        <input type="password" placeholder="*******"
+                                                               name="newPassword"
                                                                class="input">
                                                         <span class="icon is-small is-left">
                                                             <i class="fa fa-lock"></i>
@@ -135,9 +143,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="field">
-                                                    <label class="label" th:text="#{label.repeat.new.password}"></label>
+                                                    <label class="label"
+                                                           th:text="#{label.repeat.new.password}">
+                                                    </label>
                                                     <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******" name="repeatNewPassword"
+                                                        <input type="password" placeholder="*******"
+                                                               name="repeatNewPassword"
                                                                class="input">
                                                         <span class="icon is-small is-left">
                                                             <i class="fa fa-lock"></i>
@@ -146,13 +157,43 @@
                                                 </div>
                                             </section>
                                             <footer class="modal-card-foot">
-                                                <button class="button is-success" th:text="#{button.save.changes}" onclick="displayToast('Toast')"></button>
-                                                <button class="button" type="reset" th:text="#{button.cancel}"></button>
+                                                <button class="button is-success"
+                                                        th:text="#{button.save.changes}"></button>
+                                                <button class="button" type="reset"
+                                                        th:text="#{button.cancel}"></button>
                                             </footer>
                                         </form>
-                                    </dic>
+                                      </div>
                                 </div>
                                 <!-- //Modal Change Password -->
+
+                                <!--<div th:if="${passwordUpdate != null && passwordUpdate.equals('success')}">-->
+                                    <!--<script type="text/javascript">-->
+                                        <!--openToastrSuccess("[[#{message.success.updatePassword}]]")-->
+                                    <!--</script>-->
+                                <!--</div>-->
+
+                                <div th:if="!${#strings.isEmpty(passwordUpdate)}">
+                                    <script type="text/javascript">
+                                        switch( "[[${passwordUpdate}]]" ){
+                                            case "success":
+                                                openToastrSuccess("[[#{message.success.updatePassword}]]");
+                                                break;
+                                            case "errorOldPassword":
+                                                openToastrError("[[#{message.error.updatePassword.oldPasswordWrong}]]");
+                                                break;
+                                            case "errorMismatch":
+                                                openToastrError("[[#{message.error.updatePassword.newPasswordNotMatch}]]");
+                                                break;
+                                        }
+                                    </script>
+                                </div>
+
+                                <!--<div th:if="${passwordUpdate != null && passwordUpdate.equals('errorMismatch')}">-->
+                                    <!--<script type="text/javascript">-->
+                                        <!--openToastrError("[[#{message.error.updatePassword.newPasswordNotMatch}]]")-->
+                                    <!--</script>-->
+                                <!--</div>-->
 
                                 <a class="navbar-item" th:text="#{button.admin}"
                                    th:href="@{/administration}"
@@ -190,6 +231,11 @@
                     </button>
                 </form>
             </a>
+            <div th:if="${folderDelete != null && folderDelete.equals('success')}">
+                <script type="text/javascript">
+                    openToastrSuccess("[[#{message.success.deleteFolder}]]")
+                </script>
+            </div>
         </nav>
 
         <div th:fragment="notes">
@@ -225,6 +271,5 @@
                 </div>
             </div>
         </div>
-
     </body>
 </html>

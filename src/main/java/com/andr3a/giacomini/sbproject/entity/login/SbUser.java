@@ -22,11 +22,27 @@ public class SbUser {
     private String firstName;
     @Column(name = "lastname")
     private String lastName;
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
     @Column(name = "userpassword")
     @NotBlank
     private String userPassword;
+
     @Column(name = "enabled")
     private Boolean enabled = true;
+
+    //    private LocalDate lastLoginDate;
+    @Column(name = "lastlogindate")
+    @CreationTimestamp
+    private Timestamp lastLoginDate;
+
     @Column(name = "email")
     @NotBlank
     @Email
@@ -51,6 +67,13 @@ public class SbUser {
     @NotNull(message = "SbGroup field is mandatory")
     @Valid
     private SbGroup sbGroup;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public SbGroup getSbGroup() { return sbGroup; }
+    public void setSbGroup(SbGroup sbGroup) { this.sbGroup = sbGroup; }
 
     public SbUser(){}
 
