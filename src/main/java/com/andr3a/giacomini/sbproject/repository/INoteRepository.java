@@ -1,6 +1,6 @@
 package com.andr3a.giacomini.sbproject.repository;
 
-import com.andr3a.giacomini.sbproject.entity.Note;
+import com.andr3a.giacomini.sbproject.model.entity.Note;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

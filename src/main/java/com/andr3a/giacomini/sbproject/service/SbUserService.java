@@ -1,13 +1,12 @@
 package com.andr3a.giacomini.sbproject.service;
 
-import com.andr3a.giacomini.sbproject.entity.login.Authorities;
-import com.andr3a.giacomini.sbproject.entity.login.SbGroup;
-import com.andr3a.giacomini.sbproject.entity.login.SbUser;
-import com.andr3a.giacomini.sbproject.repository.login.ISbGroupRepository;
-import com.andr3a.giacomini.sbproject.repository.login.ISbUserRepository;
-import com.andr3a.giacomini.sbproject.web.dto.SbUserDto;
+import com.andr3a.giacomini.sbproject.model.entity.Authorities;
+import com.andr3a.giacomini.sbproject.model.entity.SbUser;
+import com.andr3a.giacomini.sbproject.repository.ISbGroupRepository;
+import com.andr3a.giacomini.sbproject.repository.ISbUserRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,10 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,19 +42,33 @@ public class SbUserService implements UserDetailsService {
 
     public Iterable<SbUser> getAllUsers(){ return sbUserRepository.findAll(); }
 
-    public void deleteSbUserById(long sbUserId){
-        sbUserRepository.deleteById(sbUserId);
+    public Page<SbUser> getAllSbUserPaginated(Pageable pageable){
 
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<SbUser> listSbUser;
+
+        long countSbUser = sbUserRepository.count();
+
+        if( countSbUser < startItem){
+            listSbUser = Collections.emptyList();
+        } else {
+            int toIndex = (int) Math.min(startItem + pageSize, countSbUser);
+            listSbUser = sbUserRepository.findAll(Sort.by("id").ascending()).subList(startItem, toIndex);
+        }
+
+        Page<SbUser> sbUserPage = new PageImpl<SbUser>(listSbUser, PageRequest.of(currentPage, pageSize), countSbUser);
+
+        return sbUserPage;
     }
 
-    public SbUser saveSbUser(SbUserDto sbUserDto) throws SQLIntegrityConstraintViolationException {
+    public void deleteSbUserById(long sbUserId){
+        sbUserRepository.deleteById(sbUserId);
+    }
 
-        SbUser sbUser = new SbUser.Builder(sbUserDto.getEmail(), new SbGroup(sbUserDto.getSbGroupDto().getId()))
-                                  .firstName(sbUserDto.getFirstName())
-                                  .lastName(sbUserDto.getLastName())
-                                  .userPassword(bCryptPasswordEncoder.encode(sbUserDto.getPassword()))
-                                  .build();
-
+    public SbUser saveSbUser(SbUser sbUser) throws SQLIntegrityConstraintViolationException {
         return sbUserRepository.save(sbUser);
     }
 
@@ -62,10 +76,26 @@ public class SbUserService implements UserDetailsService {
         return sbUserRepository.findSbUser2ByEmail(email);
     }
 
+    public SbUser findSbUserById(Long id){
+        return sbUserRepository.findById(id).get();
+    }
+
     public void updateSbUserPassword(SbUser sbUser, String newPassword){
         sbUserRepository.updateSbUsersPasswordByEmail(
                 sbUser.getEmail(),
                 newPassword);
+    }
+
+    public void updateSbUserLastLoginDate(String email, LocalDateTime localDateTime){
+        sbUserRepository.updateSbUsersLastLoginDate(email, localDateTime);
+    }
+
+    public void updateSbUserBySbUser(SbUser sbUserToUpdate){
+        sbUserRepository.save(sbUserToUpdate);
+    }
+
+    public void enableDisableSbUserByEmail(String email, boolean enabled){
+        sbUserRepository.updateSbUsersEnabled(email, enabled);
     }
 
     @Override
@@ -81,6 +111,9 @@ public class SbUserService implements UserDetailsService {
         list.add(sbUser.getSbGroup().getAuthorities());
 
         User user = new User(sbUser.getEmail(), sbUser.getUserPassword(), mapRolesToAuthority(list));
+
+        // Update Last Login Date
+        updateSbUserLastLoginDate(sbUser.getEmail(), LocalDateTime.now());
 
         return user;
     }

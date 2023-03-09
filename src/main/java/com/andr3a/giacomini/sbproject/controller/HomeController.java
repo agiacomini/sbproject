@@ -1,6 +1,6 @@
 package com.andr3a.giacomini.sbproject.controller;
 
-import com.andr3a.giacomini.sbproject.entity.Note;
+import com.andr3a.giacomini.sbproject.model.entity.Note;
 import com.andr3a.giacomini.sbproject.service.FolderService;
 import com.andr3a.giacomini.sbproject.service.NoteService;
 import org.slf4j.Logger;
@@ -58,7 +58,6 @@ public class HomeController {
             List<Note> noteList = noteService.findNotesByFolderId(folderId);
             log.info(noteList.toString());
             model.addAttribute("notes", noteList);
-//            model.addAttribute("folderName", noteList.get(0).getFolder().getNameFolder());
         }
         log.trace("END listNoteByFolderId()");
         return "redirect:/homeByFolder?folderId=" + folderId;

@@ -1,5 +1,7 @@
 package com.andr3a.giacomini.sbproject.utils;
 
+import com.andr3a.giacomini.sbproject.model.dto.BaseDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Comparator;
@@ -52,5 +54,13 @@ public class Utils {
                                             PasswordEncoder passwordEncoder){
         // PasswordEncoder like BCryptPasswordEncoder
         return passwordEncoder.matches(password, userPassword);
+    }
+
+    public BaseDto convertToDto(Object obj, BaseDto mapper) {
+        return new ModelMapper().map(obj, mapper.getClass());
+    }
+
+    public Object convertToEntity(Object obj, BaseDto mapper) {
+        return new ModelMapper().map(mapper, obj.getClass());
     }
 }

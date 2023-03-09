@@ -5,65 +5,310 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Hello Bulma!</title>
-        <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
-              rel="stylesheet">
+
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
-              rel="stylesheet">
+        <!-- Toastr -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+        <!-- Bulma & Bulma's extension -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel="stylesheet" th:href="@{/css/bulma-switch/bulma-switch.min.css}">
+        <link rel="stylesheet" th:href="@{/css/bulma-responsive-tables/main.min.css}">
+
+        <!-- Avatar User Stylesheet -->
+        <link rel="stylesheet" th:href="@{/css/avatar/avatar.css}">
+
+        <!-- Avatar Js to Change color Dynamically -->
+        <script type="text/javascript" th:src="@{js/avatar/avatar.js}"></script>
+
+        <!-- Js to Sort by Table Header -->
+        <script type="text/javascript" th:src="@{js/SortTable.js}"></script>
+
     </head>
     <body>
         <div th:replace="fragments :: navbar"></div>
-        <section class="section is-medium">
-            <h1 class="title">List of Users</h1>
-                <table class="table is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th><abbr title="Position">Pos</abbr></th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Group</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="sbUser, index : ${sbUsers}">
-                            <td th:text="${index.index + 1}"></td>
-                            <td th:text="${sbUser.firstName}"></td>
-                            <td th:text="${sbUser.lastName}"></td>
-                            <td th:text="${sbUser.email}"></td>
-                            <td th:text="${sbUser.sbGroup.authorities.grants}"></td>
-                            <td>
-                                <form th:action="@{/administration}" method="POST">
-                                    <input type="hidden" th:name="id" th:value="${sbUser.id}">
-                                    <input type="hidden" th:name="email" th:value="${sbUser.email}">
-                                    <button title="Delete User">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <div th:if="!${#strings.isEmpty(sbUserDelete)}">
-                            <script type="text/javascript">
-                                switch( "[[${sbUserDelete}]]" ){
-                                    case "success":
-                                        openToastrSuccess("[[#{message.success.sbUserDelete}]]")
-                                        break;
-                                    case "error":
-                                        openToastrError("[[#{message.error.sbUserDelete}]]")
-                                        break;
-                                }
-                            </script>
-                        </div>
-                        <script th:inline="javascript">
-                            /*<![CDATA[*/
-                                console.log([[${sbUserDelete}]]);
-                            /*]]>*/
-                        </script>
-                    </tbody>
-                    <tfoot></tfoot>
-                </table>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title" th:text="#{title.user.list }"></h1>
+                </div>
+            </div>
         </section>
+        <section class="section is-medium">
+<!--            <div class="container">-->
+            <div class="table-container">
+                <div class="b-table">
+                    <div class="field table-mobile-sort">
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <span class="select is-fullwidth">
+                                  <select>
+                                    <option>First Name</option>
+                                    <option>Last Name</option>
+                                    <option>Email</option>
+                                  </select>
+                                </span>
+                            </div>
+                            <div class="control">
+                                <button class="button is-primary">
+                                    <span class="icon is-small"><i class="fa fa-arrow-up"></i></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="level-left">
+                        <div class="level-item">
+                            <!-- Button trigger "Modal Create User" -->
+                            <a class="js-modal-trigger"
+                               data-toggle="modal"
+                               data-backdrop='static'
+                               data-keyboard='false'
+                               data-row="${groups}"
+                               data-target="modal-create-sbUser"
+                               th:text="#{link.create.new.user}">
+                            </a>
+                            <!-- Modal Create SbUser -->
+                            <div th:insert="fragmentsModal :: modalCreateSbUser"></div>
+                            <!-- //Modal Create SbUser -->
+                        </div>
+
+                        <div class="level-item">
+                            |
+                        </div>
+                        <div class="level-item">
+                            <a th:href="@{/download/users/export/excel}"
+                               th:text="#{link.export.excel.user}">
+                            </a>
+                        </div>
+
+                        <div class="level-item" align="right" style="margin-right: 0; margin-left: auto; padding-right: 0px">
+                            <div style="margin-right: 5px;">
+                                Show
+                            </div>
+                            <div class="select" id="selectSize">
+                                <form action="#" th:action="@{/administration}" th:method="GET">
+                                    <div th:with="intList = ${ {5, 10, 15, 20, 30} }">
+                                        <select name="sizeSelected" id="sizeSelected"
+                                                th:onchange="'window.location.href = \'' + @{/administration} + '?size=\' + this.value ' ">
+                                            <option th:each="int : ${intList}" th:value="${int}" th:text="${int}"
+                                                    th:selected="${selectedSize == int}"></option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div style="margin-left: 5px;">
+                                entries
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <br>
+                    <div class="table-wrapper has-mobile-card">
+<!--                        <table class="table is-fullwidth is-striped is-hoverable is-fullwidth table-sortable searchable sortable">-->
+                        <table id="tableUsers" class="table table-sortable is-fullwidth is-striped is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th><abbr title="Position">Pos</abbr></th>
+                                    <th>Avatar</th>
+                                    <th class="is-current-sort is-sortable" onclick="sortTable(2)">
+                                        <div class="th-wrap">
+                                            First Name
+                                            <span class="icon is-small">
+                                                <i class="fa fa-arrow-up"></i>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th class="is-sortable">
+                                        <div class="th-wrap">
+                                            Last Name
+                                            <span class="icon is-small">
+                                                <i class="fa fa-arrow-up"></i>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th>Email</th>
+                                    <th>Last Login</th>
+                                    <th>Group</th>
+                                    <th><abbr title="Enabled/Disabled">Ena/Dis</abbr></th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="sbUser, index : ${sbUserPaginated.content}">
+                                    <td data-label="Pos" th:text="${index.index + 1}"></td>
+                                    <td data-label="Avatar">
+                                        <div class="avatar" th:data-label="${#strings.substring(sbUser.firstName,0,1) + #strings.substring(sbUser.lastName,0,1)}"></div>
+                                    </td>
+                                    <td data-label="First Name" th:text="${sbUser.firstName}"></td>
+                                    <td data-label="Last Name" th:text="${sbUser.lastName}"></td>
+                                    <td data-label="Email" th:text="${sbUser.email}"></td>
+                                    <td data-label="Last Login" th:text="${#temporals.format(sbUser.lastLoginDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                                    <td th:text="${sbUser.sbGroup.authorities.grants}"></td>
+                                    <td>
+                                        <form action="#" th:action="@{/administration}" th:method="PUT">
+                                            <input type="hidden" th:name="enabled" th:value="${sbUser.enabled}">
+                                            <input type="hidden" th:name="email" th:value="${sbUser.email}">
+                                            <button style="background-color:transparent;border:none;padding:0;outline:none;margin-top:0px">
+                                                <div class="field">
+                                                    <input th:if="${sbUser.enabled}"
+                                                           th:id="'switchRoundedSuccess-' + ${index.index + 1}"
+                                                           th:name="'switchRoundedSuccess-' + ${index.index + 1}"
+                                                           th:value="${sbUser.enabled}"
+                                                           type="checkbox"
+                                                           class="switch is-rounded is-success"
+                                                           checked="checked">
+                                                    <input th:unless="${sbUser.enabled}"
+                                                           th:id="'switchRoundedSuccess-' + ${index.index + 1}"
+                                                           th:name="'switchRoundedSuccess-' + ${index.index + 1}"
+                                                           th:value="${sbUser.enabled}"
+                                                           type="checkbox"
+                                                           class="switch is-rounded is-success">
+                                                    <label th:for="'switchRoundedSuccess-' + ${index.index + 1}"></label>
+                                                </div>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="is-actions-cell">
+                                        <div class="buttons is-left">
+                                            <!-- Button trigger "Modal View SbUser" -->
+                                            <a class="navbar-item js-modal-trigger button is-small is-primary"
+                                               data-toggle="modal"
+                                               data-backdrop='static'
+                                               data-keyboard='false'
+                                               data-row="${sbUser}"
+                                               th:attr="data-target=${'#modal-view-sbUser'+sbUser.id}">
+                                                <span class="icon">
+                                                    <i class="fa fa-eye"></i>
+                                                </span>
+                                            </a>
+                                            <!-- Modal View SbUser -->
+                                            <div th:insert="fragmentsModal :: modalViewSbUser"></div>
+                                            <!-- //Modal View SbUser -->
+
+                                            <!-- Button trigger "Modal Edit SbUser" -->
+                                            <a class="navbar-item js-modal-trigger button is-small is-warning"
+                                               data-toggle="modal"
+                                               data-backdrop='static'
+                                               data-keyboard='false'
+                                               data-row="${sbUser}, ${groups}"
+                                               th:attr="data-target=${'#modal-edit-sbUser'+sbUser.id}"
+                                               th:field="*{sbUserPaginated.content[__${index.index}__].sbGroup.groupName}">
+                                                <span class="icon">
+                                                    <i class="fa fa-edit"></i>
+                                                </span>
+                                            </a>
+                                            <!-- Modal Edit SbUser -->
+                                            <div th:insert="fragmentsModal :: modalEditSbUser"></div>
+                                            <!-- //Modal Edit SbUser -->
+
+                                            <!-- Button trigger "Modal Confirm Delete User" -->
+                                            <a class="navbar-item js-modal-trigger button is-small is-danger"
+                                               data-toggle="modal"
+                                               data-backdrop='static'
+                                               data-keyboard='false'
+                                               data-row="${sbUser}"
+                                               th:attr="data-target=${'#modal-confirm-delete' + sbUser.id}"
+                                               th:field="*{sbUserPaginated.content[__${index.index}__].sbGroup.groupName}">
+                                                <span class="icon">
+                                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                                </span>
+                                            </a>
+                                            <!-- Modal Confirm Delete User -->
+                                            <div th:insert="fragmentsModal :: modalConfirmDeleteUser"></div>
+                                            <!-- //Modal Confirm Delete User -->
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <div class="notification">
+                                    <div class="level">
+                                        <div class="level-left">
+                                            <div class="level-item">
+                                                <div class="buttons has-addons">
+                                                    <th:block th:each="pageNumber : ${pageNumbers}">
+                                                        <form th:action="@{/administration}" th:method="GET">
+                                                            <input type="hidden" th:name="page" th:value="${pageNumber}">
+                                                            <input type="hidden" th:name="size" th:value="${sbUserPaginated.size}">
+                                                            <button class="button" th:classappend="${pNum == pageNumber} ? 'is-active' : ''"
+                                                                    th:text="${pageNumber}">
+                                                            </button>
+                                                        </form>
+                                                    </th:block>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="level-right">
+                                            <div class="level-item">
+                                                <small>
+                                                    Page [[${pNum}]] of [[${pageNumbers.size}]]
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div th:if="!${#strings.isEmpty(createSbUser)}">
+            <script type="text/javascript">
+                switch( "[[${createSbUser}]]" ){
+                    case "success":
+                        openToastrSuccess("[[#{message.success.sbUserCreate}]]")
+                        break;
+                    case "errorEmailPattern":
+                        openToastrError("[[#{message.error.notMatchPatternEmail.sbUserCreate}]]")
+                        break;
+                    case "errorDuplicateEmail":
+                        openToastrError("[[#{message.error.duplicateEmail.sbUserCreate}]]")
+                        break;
+                }
+            </script>
+        </div>
+
+        <div th:if="!${#strings.isEmpty(sbUserDelete)}">
+            <script type="text/javascript">
+                switch( "[[${sbUserDelete}]]" ){
+                    case "success":
+                        openToastrSuccess("[[#{message.success.sbUserDelete}]]")
+                        break;
+                    case "error":
+                        openToastrError("[[#{message.error.sbUserDelete}]]")
+                        break;
+                }
+            </script>
+        </div>
+        <div th:if="!${#strings.isEmpty(enableDisableSbUser)}">
+            <script type="text/javascript">
+                switch( "[[${enableDisableSbUser}]]" ){
+                    case "success":
+                        openToastrSuccess("[[#{message.success.sbUserEnabledDisable}]]")
+                        break;
+                    case "error":
+                        openToastrError("[[#{message.error.sbUserEnabledDisable}]]")
+                        break;
+                }
+            </script>
+        </div>
+        <div th:if="!${#strings.isEmpty(updateSbUser)}">
+            <script type="text/javascript">
+                switch( "[[${updateSbUser}]]" ){
+                    case "success":
+                        openToastrSuccess("[[#{message.success.sbUserUpdate}]]")
+                        break;
+                    case "error":
+                        openToastrError("[[#{message.error.sbUserUpdate}]]")
+                        break;
+                }
+            </script>
+        </div>
     </body>
 </html>

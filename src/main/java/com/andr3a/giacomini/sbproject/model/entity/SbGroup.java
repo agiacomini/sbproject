@@ -1,39 +1,28 @@
-package com.andr3a.giacomini.sbproject.entity.login;
+package com.andr3a.giacomini.sbproject.model.entity;
 
 import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 import java.util.Set;
 
 @Data
 @Entity
 @ToString
 @Table(name = "sbgroup")
-public class SbGroup {
+public class SbGroup extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @NotNull
-//    @NotBlank
     @Column(name = "groupname")
     private String groupName;
 
     @Column(name = "groupdescription")
     private String groupDescription;
-
-    private Date created;
-    @Column(name = "createdby")
-    private String createdBy;
-    @Column(name = "lastupdate")
-    private Date lastUpdate;
-    @Column(name = "lastupdateby")
-    private String lastUpdateBy;
 
     public SbGroup(){}
 
@@ -57,15 +46,4 @@ public class SbGroup {
 
     public Authorities getAuthorities() { return authorities; }
     public void setAuthorities(Authorities authorities) { this.authorities = authorities; }
-
-//    @Override
-//    public String toString() {
-//        return "SbGroup{" +
-//                "id=" + id +
-//                ", groupName='" + groupName + '\'' +
-//                ", groupDescription='" + groupDescription + '\'' +
-//                ", sbUsers=" + sbUsers +
-//                ", authorities=" + authorities +
-//                '}';
-//    }
 }

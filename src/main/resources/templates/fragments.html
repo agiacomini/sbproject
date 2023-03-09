@@ -88,90 +88,17 @@
                                     About
                                 </a>
                                 <!-- Button trigger "Modal Change Password" -->
-                                <a class="navbar-item js-modal-trigger" data-toggle="modal"
-                                   data-target="modal-change-password" th:text="#{menu.link.change.password}"
-                                   data-backdrop='static' data-keyboard='false'>
+                                <a class="navbar-item js-modal-trigger"
+                                   data-toggle="modal"
+                                   data-target="modal-change-password"
+                                   data-backdrop='static'
+                                   data-keyboard='false'
+                                   th:text="#{menu.link.change.password}">
                                 </a>
                                 <!-- Modal Change Password -->
-                                <div class="modal hide fade" id="modal-change-password"
-                                     tabindex="-1" role="dialog" aria-labelledby="modal-change-password"
-                                     aria-hidden="true" data-keyboard="false" data-backdrop="static"
-                                     href="#">
-                                    <div class="modal-background"></div>
-                                    <div class="modal-card">
-                                        <form id="changePassword" name="changePassword"
-                                              th:action="@{/updatePassword}" method="POST">
-                                            <input type="hidden" name="userEmail"
-                                                   th:value="${#httpServletRequest.remoteUser}">
-                                            <input type="hidden" name="getRequestURI"
-                                                   th:value="${#httpServletRequest.getRequestURI()}">
-                                            <input type="hidden" name="getQueryString"
-                                                   th:value="${#httpServletRequest.getQueryString()}">
-
-                                            <header class="modal-card-head">
-                                                <p class="modal-card-title"
-                                                   th:text="#{title.change.password} + ': ' + ${#httpServletRequest.remoteUser}">
-                                                </p>
-                                                <button class="delete" aria-label="close" type="reset">
-                                                </button>
-                                            </header>
-                                            <section class="modal-card-body">
-                                                <div class="field">
-                                                    <label class="label"
-                                                           th:text="#{label.old.password}">
-                                                    </label>
-                                                    <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******"
-                                                               name="oldPassword"
-                                                               class="input">
-                                                        <span class="icon is-small is-left">
-                                                            <i class="fa fa-lock"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="field">
-                                                    <label class="label"
-                                                           th:text="#{label.new.password}">
-                                                    </label>
-                                                    <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******"
-                                                               name="newPassword"
-                                                               class="input">
-                                                        <span class="icon is-small is-left">
-                                                            <i class="fa fa-lock"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="field">
-                                                    <label class="label"
-                                                           th:text="#{label.repeat.new.password}">
-                                                    </label>
-                                                    <div class="control has-icons-left">
-                                                        <input type="password" placeholder="*******"
-                                                               name="repeatNewPassword"
-                                                               class="input">
-                                                        <span class="icon is-small is-left">
-                                                            <i class="fa fa-lock"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </section>
-                                            <footer class="modal-card-foot">
-                                                <button class="button is-success"
-                                                        th:text="#{button.save.changes}"></button>
-                                                <button class="button" type="reset"
-                                                        th:text="#{button.cancel}"></button>
-                                            </footer>
-                                        </form>
-                                      </div>
-                                </div>
+                                <div th:insert="fragmentsModal :: modalChangePassword"></div>
                                 <!-- //Modal Change Password -->
 
-                                <!--<div th:if="${passwordUpdate != null && passwordUpdate.equals('success')}">-->
-                                    <!--<script type="text/javascript">-->
-                                        <!--openToastrSuccess("[[#{message.success.updatePassword}]]")-->
-                                    <!--</script>-->
-                                <!--</div>-->
 
                                 <div th:if="!${#strings.isEmpty(passwordUpdate)}">
                                     <script type="text/javascript">
@@ -188,12 +115,6 @@
                                         }
                                     </script>
                                 </div>
-
-                                <!--<div th:if="${passwordUpdate != null && passwordUpdate.equals('errorMismatch')}">-->
-                                    <!--<script type="text/javascript">-->
-                                        <!--openToastrError("[[#{message.error.updatePassword.newPasswordNotMatch}]]")-->
-                                    <!--</script>-->
-                                <!--</div>-->
 
                                 <a class="navbar-item" th:text="#{button.admin}"
                                    th:href="@{/administration}"
@@ -242,20 +163,13 @@
             <h1 class="title" th:text="${folderName}"></h1>
             <div class="columns is-multiline">
                 <div class="column is-one-third" th:each="note : ${notes}">
-                    <div class="card">
+                    <div class="card" >
+<!--                        <input type="hidden" id="noteDtoId" name="noteDtoId" th:field="*{id}">-->
                         <header class="card-header">
-                            <div class="card-header-title" th:text="${note.title}">
-                                titolo
-                            </div>
+                            <div class="card-header-title" th:text="${note.title}"></div>
                         </header>
                         <div class="card-content">
-                            <div class="content" th:text="${note.content}">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-                                <a href="#">#css</a> <a href="#">#responsive</a>
-                                <br>
-                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-                            </div>
+                            <div class="content" th:text="${note.content}"></div>
                         </div>
                         <footer class="card-footer" sec:authorize="hasAuthority('ROLE_ADMIN')">
                             <a th:href="@{/admin/notes/create ( status = view, noteId = ${note.id}, noteTitle = ${note.title}, noteContent = ${note.content}, folderId = ${note.folder.id} )}"
@@ -269,7 +183,21 @@
                         </footer>
                     </div>
                 </div>
+                <div th:if="!${#strings.isEmpty(noteDelete)}">
+                    <script type="text/javascript">
+                        switch( "[[${noteDelete}]]" ){
+                            case "success":
+                                openToastrSuccess("[[#{message.success.deleteNote}]]");
+                                break;
+                            case "error":
+                                openToastrError("[[#{message.error.deleteNote}]]");
+                                break;
+                        }
+                    </script>
+                </div>
             </div>
         </div>
+
+
     </body>
 </html>

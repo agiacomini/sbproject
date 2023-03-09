@@ -1,6 +1,6 @@
-package com.andr3a.giacomini.sbproject.repository.login;
+package com.andr3a.giacomini.sbproject.repository;
 
-import com.andr3a.giacomini.sbproject.entity.login.Authorities;
+import com.andr3a.giacomini.sbproject.model.entity.Authorities;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,12 +1,11 @@
 package com.andr3a.giacomini.sbproject.entity.login;
 
-import com.andr3a.giacomini.sbproject.repository.login.ISbUserRepository;
+import com.andr3a.giacomini.sbproject.model.entity.SbUser;
+import com.andr3a.giacomini.sbproject.repository.ISbUserRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
 
 @SpringBootTest
 public class SbUserTest {

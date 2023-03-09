@@ -1,6 +1,6 @@
 package com.andr3a.giacomini.sbproject.service;
 
-import com.andr3a.giacomini.sbproject.entity.Folder;
+import com.andr3a.giacomini.sbproject.model.entity.Folder;
 import com.andr3a.giacomini.sbproject.repository.IFolderRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +21,32 @@ public class FolderService {
 
     public List<Folder> findFolders(){
 
+        log.info("findFolders() - ");
         return folderRepository.findAll();
     }
 
     public Optional<Folder> findFolderById(Long folderId){
 
+        log.info("findFolderById() - " + folderId );
         return folderRepository.findById(folderId);
     }
 
-    public Folder createFolder(Folder folder){
+    public Folder createFolderByEntity(Folder folder){
 
+        log.info("createFolderByEntity() - " + folder.toString() );
         return folderRepository.save(folder);
     }
 
     public ResponseEntity deleteFolderByFolderId(Long folderId){
 
-//        log.info("deleteFolderByFolderId() - " + folderRepository.findById(folderId).orElseThrow().toString() );
         log.info("deleteFolderByFolderId() - " + folderRepository.findById(folderId).toString() );
         folderRepository.deleteById(folderId);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity deleteFolder(Folder folder){
+    public ResponseEntity deleteFolderByEntity(Folder folder){
 
-        log.info("deleteFolder() - " + folder.toString() );
+        log.info("deleteFolderByEntity() - " + folder.toString() );
         folderRepository.delete(folder);
         return ResponseEntity.ok().build();
     }

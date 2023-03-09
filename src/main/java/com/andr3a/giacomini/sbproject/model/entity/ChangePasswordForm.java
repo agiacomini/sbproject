@@ -1,4 +1,4 @@
-package com.andr3a.giacomini.sbproject.entity.login;
+package com.andr3a.giacomini.sbproject.model.entity;
 
 import lombok.Data;
 

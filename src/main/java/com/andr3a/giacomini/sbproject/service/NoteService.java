@@ -1,6 +1,6 @@
 package com.andr3a.giacomini.sbproject.service;
 
-import com.andr3a.giacomini.sbproject.entity.Note;
+import com.andr3a.giacomini.sbproject.model.entity.Note;
 import com.andr3a.giacomini.sbproject.repository.INoteRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,13 @@ public class NoteService {
 
     public Iterable<Note> getAllNotes(){
 
+        log.info("getAllNotes() -" );
         return noteRepository.findAll();
     }
 
     public Optional<Note> getNoteById(Long noteId){
 
+        log.info("getNoteById() - id: " +  noteId);
         Optional<Note> note;
 
         if(!noteRepository.findById(noteId).isPresent()) {
@@ -38,45 +40,30 @@ public class NoteService {
 
     public List<Note> findNotesByFolderId(Long folderId){
 
+        log.info("findNotesByFolderId() - id: " + folderId );
         return noteRepository.findNote2ByFolderId(folderId);
     }
 
-    public Note saveNote(Note newNote){
+    public Note saveNoteByEntity(Note newNote){
 
-        log.info("saveNote() - " + newNote.toString() );
+        log.info("saveNoteByEntity() - " + newNote.toString() );
         return noteRepository.save(newNote);
     }
 
-    public Note updateNoteByNoteId(Long noteId, Note noteDto){
-
-        log.trace("START updateNoteByNoteId()");
-//        Note noteToUpdate = noteRepository.findById(noteId).orElseThrow();
-        Note noteToUpdate = noteRepository.findById(noteId).orElseThrow(RuntimeException::new);
-        log.info("Note BEFORE - " + noteToUpdate.toString() );
-
-        noteToUpdate.setTitle(noteDto.getTitle() != null && !noteDto.getTitle().isEmpty() ? noteDto.getTitle() : "");
-        noteToUpdate.setContent(noteDto.getContent() != null && !noteDto.getContent().isEmpty() ? noteDto.getContent() : "");
-        noteToUpdate.setDone(noteDto.getDone() != null ? noteDto.getDone() : false );
-        if( noteDto.getFolder() != null ){
-            noteToUpdate.setFolder(noteDto.getFolder());
-        }
-
-        log.info("Note LATER - " + noteToUpdate.toString() );
-        log.trace("END updateNoteByNoteId()");
+    public Note updateNoteByNote(Note noteToUpdate){
         return noteRepository.save(noteToUpdate);
     }
 
     public ResponseEntity deleteNoteById(Long noteId){
 
-//        log.info("deleteNoteById() - " + noteRepository.findById(noteId).orElseThrow().toString() );
         log.info("deleteNoteById() - " + noteRepository.findById(noteId).orElseThrow(RuntimeException::new).toString() );
         noteRepository.deleteById(noteId);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity deleteNote(Note note){
+    public ResponseEntity deleteNoteByEntity(Note note){
 
-        log.info("deleteNote() - " + note.toString() );
+        log.info("deleteNoteByEntity() - " + note.toString() );
         noteRepository.delete(note);
         return ResponseEntity.ok().build();
     }

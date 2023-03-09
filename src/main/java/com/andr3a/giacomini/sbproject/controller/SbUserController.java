@@ -1,11 +1,12 @@
 package com.andr3a.giacomini.sbproject.controller;
 
-import com.andr3a.giacomini.sbproject.entity.login.SbUser;
+import com.andr3a.giacomini.sbproject.model.entity.SbUser;
 import com.andr3a.giacomini.sbproject.service.SbGroupService;
 import com.andr3a.giacomini.sbproject.service.SbUserService;
 import com.andr3a.giacomini.sbproject.utils.Utils;
-import com.andr3a.giacomini.sbproject.web.dto.SbUserDto;
+import com.andr3a.giacomini.sbproject.model.dto.SbUserDto;
 import com.andr3a.giacomini.sbproject.utils.Email;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,7 +20,6 @@ import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 @Controller
-//@RequestMapping("/registration")
 public class SbUserController {
     @Autowired
     private SbUserService sbUserService;
@@ -30,14 +30,14 @@ public class SbUserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @ModelAttribute("sbUserDto")
-    public SbUserDto userRegistrationDto(){
-        return new SbUserDto();
-    }
+    public SbUserDto userRegistrationDto(){ return new SbUserDto.SbUserDtoBuilder().build(); }
 
     @GetMapping("/registration")
     public String showRegistrationForm(Model model){
-//        model.addAttribute("user", new SbUserRegistrationDto());
         model.addAttribute("groups", sbGroupService.getAllGroups());
         return "registration";
     }
@@ -45,12 +45,14 @@ public class SbUserController {
     @PostMapping("/registration")
     public String registerUserAccount(@ModelAttribute("user") SbUserDto sbUserDto){
 
+        log.trace("START registerUserAccount()");
         try {
             if(!Email.emailPatternMatches(sbUserDto.getEmail())){
                 log.error("Email Pattern not match");
                 return "redirect:/registration?emailPatternNotMatch";
             }
-            sbUserService.saveSbUser(sbUserDto);
+            SbUser sbUser = sbUserService.saveSbUser(convertToEntity(sbUserDto));
+            log.info("saveSbUser - " + sbUser);
 
         } catch (DataIntegrityViolationException exception){
             log.error(exception.getMessage());
@@ -63,10 +65,11 @@ public class SbUserController {
             log.error(exception.getMessage());
             return "redirect:/registration?duplicateEmail";
         }
+        log.trace("END registerUserAccount()");
         return "redirect:/registration?success";
     }
 
-    @PostMapping("/updatePassword")
+    @PutMapping("/updatePassword")
     public String updateSbUserPassword(@ModelAttribute("userEmail") String userEmail,
                                      @ModelAttribute("getRequestURI") String requestedURI,
                                      @ModelAttribute("getQueryString") String queryString,
@@ -98,7 +101,6 @@ public class SbUserController {
             // Match "New Password" with "Repeat New Password"
             if( !(newPassword.equals(repeatNewPassword)) ){
                 log.error("New Password and Repeat New Password not match");
-//                model.addAttribute("passwordUpdate", "New Password and Repeat New Password not match");
                 ra.addFlashAttribute("passwordUpdate", "errorMismatch");
                 return sb.toString();
             }
@@ -115,5 +117,16 @@ public class SbUserController {
 
         log.trace("END updateSbUserPassword() - sbUser: " + userEmail);
         return sb.toString();
+    }
+
+    private SbUserDto convertToDto(SbUser sbUser) {
+        SbUserDto sbUserDto = modelMapper.map(sbUser, SbUserDto.class);
+        return sbUserDto;
+    }
+
+    private SbUser convertToEntity(SbUserDto sbUserDto) {
+        SbUser sbUser = modelMapper.map(sbUserDto, SbUser.class);
+        sbUser.setUserPassword(bCryptPasswordEncoder.encode(sbUserDto.getUserPassword()));
+        return sbUser;
     }
 }

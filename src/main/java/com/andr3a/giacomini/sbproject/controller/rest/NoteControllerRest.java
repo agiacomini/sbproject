@@ -1,6 +1,7 @@
 package com.andr3a.giacomini.sbproject.controller.rest;
 
-import com.andr3a.giacomini.sbproject.entity.Note;
+import com.andr3a.giacomini.sbproject.model.entity.Folder;
+import com.andr3a.giacomini.sbproject.model.entity.Note;
 import com.andr3a.giacomini.sbproject.service.NoteService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -39,15 +40,35 @@ public class NoteControllerRest {
     }
 
     @PutMapping("/notes/update/{noteId}")
-    Note updateNoteById(@PathVariable Long noteId, @RequestBody @NotNull Note noteDto){
-        return noteService.updateNoteByNoteId(noteId, noteDto);
+    Note updateNoteById(@PathVariable Long noteId, @RequestBody @NotNull Note note){
+
+        log.trace("START updateNoteById()");
+        Note noteToUpdate = null;
+        try{
+            noteToUpdate = noteService.getNoteById(noteId).get();
+            log.info("BEFORE note :" + noteToUpdate.toString() );
+
+            noteToUpdate.setTitle(note.getTitle() != null && !note.getTitle().isEmpty() ? note.getTitle() : "");
+            noteToUpdate.setContent(note.getContent() != null && !note.getContent().isEmpty() ? note.getContent() : "");
+            noteToUpdate.setDone(note.getDone() != null ? note.getDone() : false );
+            if( note.getFolder() != null ){
+                noteToUpdate.setFolder(new Folder(note.getFolder().getId()));
+            }
+            noteToUpdate = noteService.updateNoteByNote(noteToUpdate);
+            log.info("AFTER note :" + noteToUpdate.toString() );
+
+        } catch(Exception exception){
+            log.error(exception.getMessage());
+        }
+        log.trace("END updateNoteById()");
+        return noteToUpdate;
     }
 
     @PostMapping("/notes")
     Note createNote(@Valid @RequestBody Note newNote){
 
         log.trace("START createNote()");
-        Note noteToSave = noteService.saveNote(newNote);
+        Note noteToSave = noteService.saveNoteByEntity(newNote);
         log.info("createNote() - " + noteToSave.toString() );
         log.trace("END createNote()");
         return noteToSave;

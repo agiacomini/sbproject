@@ -14,19 +14,21 @@
         <section class="section">
             <div class="columns">
                 <div class="column">
-                    <form action="/admin/notes/create" method="POST">
+                    <form th:action="@{/admin/notes/create}" method="POST" th:object="${noteDto}">
+                        <input type="hidden" id="noteDtoId" name="noteDtoId" th:field="*{id}">
+                        <input type="hidden" th:if="${status.equals('view')}" id="folderDtoId" name="folderDtoId" th:field="*{folderDto.id}">
                         <div class="field">
-                            <label class="label">
-                                Titolo
-                            </label>
+                            <label class="label" th:text="#{label.note.title}"></label>
                             <div class="control">
                                 <input th:if="${status.equals('save')}"
+                                       th:field="*{title}"
                                        class="input"
                                        name="noteTitle"
                                        type="text"
                                        laceholder="Titolo della Nota"
                                        required>
                                 <input th:if="${status.equals('edit')}"
+                                       th:field="*{title}"
                                        class="input"
                                        name="noteTitle"
                                        type="text"
@@ -34,6 +36,7 @@
                                        required
                                        th:value="${noteTitle}">
                                 <input th:if="${status.equals('view')}"
+                                       th:field="*{title}"
                                        class="input"
                                        name="noteTitle"
                                        type="text"
@@ -45,22 +48,23 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">
-                                Testo della Nota
-                            </label>
+                            <label class="label" th:text="#{label.note.content}"></label>
                             <div class="control">
                                 <textarea class="textarea"
+                                          th:field="*{content}"
                                           name="noteContent"
                                           placeholder="Testo della Nota"
                                           required
                                           th:if="${status.equals('save')}"></textarea>
                                 <textarea class="textarea"
+                                          th:field="*{content}"
                                           name="noteContent"
                                           placeholder="Testo della Nota"
                                           required
                                           th:if="${status.equals('edit')}"
                                           th:text="${noteContent}"></textarea>
                                 <textarea class="textarea"
+                                          th:field="*{content}"
                                           name="noteContent"
                                           placeholder="Testo della Nota"
                                           required
@@ -71,13 +75,11 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">
-                                Cartella
-                            </label>
+                            <label class="label" th:text="#{label.folder}"></label>
                             <div class="control">
                                 <div class="select">
                                     <input type="hidden" id="folderS" name="folderS" th:value="${folderId}">
-                                    <select name="folderSelected" th:disabled="${status.equals('view')}">
+                                    <select name="folderSelected" th:disabled="${status.equals('view')}" th:field="*{folderDto.id}">
                                         <option th:each="folder : ${folders}" th:text="${folder.nameFolder}"
                                                 th:value="${folder.id}" th:selected="${folderId == folder.id}">
                                         </option>
@@ -85,7 +87,6 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="noteId" name="noteId" th:value="${noteId}">
                         <div class="field is-grouped">
                             <div class="control">
                                 <button class="button is-link" name="submitStatus"

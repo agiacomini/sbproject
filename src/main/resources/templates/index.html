@@ -64,6 +64,29 @@
                     <div class="column is-four-fifths"></div>
                     <div th:replace="fragments :: notes"></div>
                 </div>
+                <div th:if="${#strings.isEmpty(noteUpdate) || #strings.isEmpty(noteCreate)}">
+                    <script type="text/javascript">
+                        if( "[[${noteUpdate}]]" !== "" ){
+                            switch( "[[${noteUpdate}]]" ){
+                                case "success":
+                                    openToastrSuccess("[[#{message.success.noteUpdate}]]")
+                                    break;
+                                case "error":
+                                    openToastrError("[[#{message.error.noteUpdate}]]")
+                                    break;
+                            }
+                        } else {
+                            switch( "[[${noteCreate}]]" ){
+                                case "success":
+                                    openToastrSuccess("[[#{message.success.noteCreate}]]")
+                                    break;
+                                case "error":
+                                    openToastrError("[[#{message.error.noteCreate}]]")
+                                    break;
+                            }
+                        }
+                    </script>
+                </div>
             </div>
         </section>
     </body>

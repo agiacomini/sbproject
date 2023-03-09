@@ -1,35 +1,29 @@
-package com.andr3a.giacomini.sbproject.entity.login;
+package com.andr3a.giacomini.sbproject.model.entity;
 
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @ToString
 @Table(name = "sbuser", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class SbUser {
+public class SbUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     private Long id;
     @Column(name = "firstname")
     private String firstName;
     @Column(name = "lastname")
     private String lastName;
-
-    public String getUserPassword() {
-        return userPassword;
-    }
-
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
 
     @Column(name = "userpassword")
     @NotBlank
@@ -38,29 +32,14 @@ public class SbUser {
     @Column(name = "enabled")
     private Boolean enabled = true;
 
-    //    private LocalDate lastLoginDate;
     @Column(name = "lastlogindate")
     @CreationTimestamp
-    private Timestamp lastLoginDate;
+    private LocalDateTime lastLoginDate;
 
     @Column(name = "email")
     @NotBlank
     @Email
     private String email;
-
-    @Column(name = "created", updatable = false)
-    @CreationTimestamp
-    private Timestamp created;
-
-    @Column(name = "createdby")
-    private String createdBy;
-
-    @Column(name = "lastupdate")
-    @CreationTimestamp
-    private Timestamp lastUpdate;
-
-    @Column(name = "lastupdateby")
-    private String lastUpdateBy;
 
     @ManyToOne
     @JoinColumn(name = "sbgroup")
@@ -74,6 +53,12 @@ public class SbUser {
     public void setEmail(String email) { this.email = email; }
     public SbGroup getSbGroup() { return sbGroup; }
     public void setSbGroup(SbGroup sbGroup) { this.sbGroup = sbGroup; }
+    public String getUserPassword() {
+        return userPassword;
+    }
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
     public SbUser(){}
 
@@ -85,7 +70,7 @@ public class SbUser {
         this.sbGroup = sbGroup;
     }
 
-    public static class Builder{
+    public static class SbUserBuilder {
 
         private String firstName;
         private String lastName;
@@ -94,27 +79,27 @@ public class SbUser {
         private String email;
         private SbGroup sbGroup;
 
-        public Builder(String email, SbGroup sbGroup){
+        public SbUserBuilder(String email, SbGroup sbGroup){
             this.email = email;
             this.sbGroup = sbGroup;
         }
 
-        public Builder firstName(String firstName){
+        public SbUserBuilder firstName(String firstName){
             this.firstName = firstName;
             return this;
         }
 
-        public Builder lastName(String lastName){
+        public SbUserBuilder lastName(String lastName){
             this.lastName = lastName;
             return this;
         }
 
-        public Builder userPassword(String userPassword){
+        public SbUserBuilder userPassword(String userPassword){
             this.userPassword = userPassword;
             return this;
         }
 
-        public Builder enabled(Boolean enabled){
+        public SbUserBuilder enabled(Boolean enabled){
             this.enabled = enabled;
             return this;
         }
@@ -124,7 +109,7 @@ public class SbUser {
         }
     }
 
-    private SbUser(Builder builder){
+    private SbUser(SbUserBuilder builder){
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.userPassword = builder.userPassword;
@@ -132,17 +117,4 @@ public class SbUser {
         this.email = builder.email;
         this.sbGroup = builder.sbGroup;
     }
-
-//    @Override
-//    public String toString() {
-//        return "SbUser{" +
-//                "id=" + id +
-//                ", firstName='" + firstName + '\'' +
-//                ", lastName='" + lastName + '\'' +
-//                ", userPassword='" + userPassword + '\'' +
-//                ", enabled=" + enabled + '\'' +
-//                ", email='" + email + '\'' +
-//                ", sbGroup=" + sbGroup +
-//                '}';
-//    }
 }

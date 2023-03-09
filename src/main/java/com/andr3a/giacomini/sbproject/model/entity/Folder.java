@@ -1,14 +1,13 @@
-package com.andr3a.giacomini.sbproject.entity;
+package com.andr3a.giacomini.sbproject.model.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "folder")
-public class Folder {
+public class Folder extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,14 +17,6 @@ public class Folder {
     @NotNull
     @NotBlank(message = "Folder Name is required")
     private String nameFolder;
-
-    private Date created;
-    @Column(name = "createdby")
-    private String createdBy;
-    @Column(name = "lastupdate")
-    private Date lastUpdate;
-    @Column(name = "lastupdateby")
-    private String lastUpdateBy;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Note> notes;

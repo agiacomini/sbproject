@@ -1,0 +1,21 @@
+:root {
+    --color: 255 255 0;
+    --randomNumber: expression("rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")");
+    --backgroundColor: #009578;
+}
+
+.avatar {
+    font-size:16px;
+    width:2em;
+    height:2em;
+    border-radius:50%;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    }
+
+.avatar::after{
+    content: attr(data-label);
+    color: #ffffff;
+    }

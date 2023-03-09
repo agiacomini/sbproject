@@ -1,4 +1,4 @@
-package com.andr3a.giacomini.sbproject.web.dto;
+package com.andr3a.giacomini.sbproject.model.dto;
 
 import lombok.Data;
 

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+              rel="stylesheet">
+    </head>
+    <body>
+
+        <!-- Modal Confirm Delete User -->
+        <div th:fragment="modalConfirmDeleteUser"
+             class="modal hide fade"
+             tabindex="-1" role="dialog" aria-labelledby="modal-confirm-delete"
+             aria-hidden="true" data-keyboard="false" data-backdrop="static"
+             th:attr="id=${'#modal-confirm-delete' + sbUser.id}"
+             href="#">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <form name="confirmDeleteUser"
+                      th:action="@{/administration}" th:method="DELETE" th:object="${sbUserDto}">
+                    <input type="hidden" name="id" th:value="${sbUser.id}">
+                    <input type="hidden" name="firstName" th:value="${sbUser.firstName}">
+                    <input type="hidden" name="lastName" th:value="${sbUser.lastName}">
+                    <input type="hidden" name="email" th:value="${sbUser.email}">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title"
+                           th:text="#{title.modal.delete.confirm.user}">
+                        </p>
+                        <button class="delete" aria-label="close" type="reset">
+                        </button>
+                    </header>
+                    <section class="modal-card-body">
+                        <div class="field">
+                            <p th:text="${sbUser.email}"></p>
+                        </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-success"
+                                th:text="#{button.confirm.delete.user}"></button>
+                        <button class="button" type="reset"
+                                th:text="#{button.cancel}"></button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+        <!-- //Modal Confirm Delete User -->
+
+        <!-- Modal Change Password -->
+        <div th:fragment="modalChangePassword"
+             class="modal hide fade" id="modal-change-password"
+             tabindex="-1" role="dialog" aria-labelledby="modal-change-password"
+             aria-hidden="true" data-keyboard="false" data-backdrop="static"
+             href="#">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <form id="changePassword" name="changePassword"
+                      th:action="@{/updatePassword}" th:method="PUT">
+                    <input type="hidden" name="userEmail"
+                           th:value="${#httpServletRequest.remoteUser}">
+                    <input type="hidden" name="getRequestURI"
+                           th:value="${#httpServletRequest.getRequestURI()}">
+                    <input type="hidden" name="getQueryString"
+                           th:value="${#httpServletRequest.getQueryString()}">
+
+                    <header class="modal-card-head">
+                        <p class="modal-card-title"
+                           th:text="#{title.modal.change.password} + ': ' + ${#httpServletRequest.remoteUser}">
+                        </p>
+                        <button class="delete" aria-label="close" type="reset">
+                        </button>
+                    </header>
+                    <section class="modal-card-body">
+                        <div class="field">
+                            <label class="label" th:text="#{label.old.password}"></label>
+                            <div class="control has-icons-left">
+                                <input type="password" placeholder="*******"
+                                       name="oldPassword" required
+                                       class="input">
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label"
+                                   th:text="#{label.new.password}">
+                            </label>
+                            <div class="control has-icons-left">
+                                <input type="password" placeholder="*******"
+                                       name="newPassword" required
+                                       class="input">
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label"
+                                   th:text="#{label.repeat.new.password}">
+                            </label>
+                            <div class="control has-icons-left">
+                                <input type="password" placeholder="*******"
+                                       name="repeatNewPassword" required
+                                       class="input">
+                                <span class="icon is-small is-left">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <button class="button is-success"
+                                    th:text="#{button.save.changes}"></button>
+                            <button class="button" type="reset"
+                                    th:text="#{button.cancel}"></button>
+                        </div>
+                    </section>
+                </form>
+            </div>
+        </div>
+        <!-- //Modal Change Password -->
+
+        <!-- Modal Create SbUser -->
+        <div th:fragment="modalCreateSbUser"
+             class="modal hide fade" id="modal-create-sbUser"
+             tabindex="-1" role="dialog" aria-labelledby="modal-create-sbUser"
+             aria-hidden="true" data-keyboard="false" data-backdrop="static"
+             href="#">
+            <form id="createSbUserForm" name="createSbUserForm" th:object="${sbUserDto}" class="box"
+                  th:action="@{/administration/createSbUser}" th:method="POST">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+    <!--                <form id="createSbUserForm" name="createSbUserForm" th:object="${newSbUserDto}" class="box"-->
+<!--                          th:action="@{/administration/createSbUser}" th:method="POST">-->
+                        <header class="modal-card-head">
+                            <p class="modal-card-title"
+                               th:text="#{title.modal.create.user}">
+                            </p>
+                            <button class="delete" aria-label="close" type="reset"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <table class="table is-fullwidth">
+                                <thead></thead>
+                                <tfoot></tfoot>
+                                <tbody>
+                                <tr>
+                                    <th>First Name: </th>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control has-icons-left">
+                                                <input class="input" name="firstName" type="text" placeholder="First Name"
+                                                       required
+                                                       th:field="*{firstName}"
+                                                       autofocus>
+                                                <!--                                        th:value="${sbUser.firstName}"-->
+                                                <span class="icon is-small is-left">
+                                                    <i class="fa fa-user"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Last Name: </th>
+                                    <td>
+                                        <div class="control has-icons-left has-icons-right">
+                                            <!--                                        th:value="${sbUser.lastName}"-->
+                                            <input type="text" name="lastName"
+                                                   placeholder="Last Name"
+                                                   class="input" required>
+                                            <span class="icon is-small is-left">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Email: </th>
+                                    <td>
+                                        <div class="control has-icons-left has-icons-right">
+                                            <!--                                        th:value="${sbUser.email}"-->
+                                            <input type="email" name="email"
+                                                   placeholder="example@example.com"
+                                                   class="input" data-validation="email" required>
+                                            <span class="icon is-small is-left">
+                                                <i class="fa fa-envelope"></i>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Password: </th>
+                                    <td>
+                                        <div class="control has-icons-left">
+                                            <input type="password" placeholder="*******"
+                                                   name="userPassword" class="input"
+                                                   required>
+                                            <span class="icon is-small is-left">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Group: </th>
+                                    <td>
+                                        <div class="control">
+                                            <div class="select">
+    <!--                                            th:value="${sbUser.sbGroup.id}"-->
+                                                <select name="sbGroupDto.id">
+                                                    <option th:each="group : ${groups}"
+                                                            th:text="${group.groupName}"
+                                                            th:value="${group.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button type="submit" class="button is-primary"
+                                    th:text="#{button.save.user}"></button>
+                            <button class="button" type="reset"
+                                    th:text="#{button.cancel}"></button>
+                        </footer>
+<!--                    </form>-->
+                </div>
+            </form>
+        </div>
+        <!-- //Modal Create SbUser -->
+
+
+        <!-- Modal View SbUser -->
+        <div th:fragment="modalViewSbUser"
+             class="modal hide fade"
+             tabindex="-1" role="dialog" aria-labelledby="modal-view-sbUser"
+             aria-hidden="true" data-keyboard="false" data-backdrop="static"
+             th:attr="id=${'#modal-view-sbUser' + sbUser.id}"
+             href="#">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title"
+                       th:text="#{title.modal.view.user} + ': ' + ${sbUser.email}">
+                    </p>
+                    <button class="delete" aria-label="close" type="reset"></button>
+                </header>
+                <section class="modal-card-body">
+                    <table class="table is-fullwidth">
+                        <thead></thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                        <tr>
+                            <th>First Name: </th>
+                            <td th:text="${sbUser.firstName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Last Name: </th>
+                            <td th:text="${sbUser.lastName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Email: </th>
+                            <td th:text="${sbUser.email}"></td>
+                        </tr>
+                        <tr>
+                            <th>Last LogIn: </th>
+                            <td th:text="${#temporals.format(sbUser.lastLoginDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                        </tr>
+                        <tr>
+                            <th>Group: </th>
+                            <td th:text="${sbUser.sbGroup.groupName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Enabled: </th>
+                            <td th:text="${sbUser.enabled}"></td>
+                        </tr>
+                        <tr>
+                            <th>Created Date: </th>
+                            <td th:text="${#temporals.format(sbUser.created, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <footer class="modal-card-foot">
+                </footer>
+            </div>
+        </div>
+        <!-- //Modal View SbUser -->
+
+        <!-- Modal Edit SbUser -->
+        <div th:fragment="modalEditSbUser"
+             class="modal hide fade"
+             tabindex="-1" role="dialog" aria-labelledby="modal-edit-sbUser"
+             aria-hidden="true" data-keyboard="false" data-backdrop="static"
+             th:attr="id=${'#modal-edit-sbUser' + sbUser.id}"
+             href="#">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <form name="editSbUser" th:object="${sbUserDto}"
+                      th:action="@{/administration/editSbUser}" th:method="PUT">
+                    <input type="hidden" name="id" th:value="${sbUser.id}">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title"
+                           th:text="#{title.modal.edit.user} + ': ' + ${sbUser.email}">
+                        </p>
+                        <button class="delete" aria-label="close" type="reset"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <table class="table is-fullwidth">
+                            <thead></thead>
+                            <tfoot></tfoot>
+                            <tbody>
+                            <tr>
+                                <th>First Name: </th>
+                                <td>
+<!--                                    <div class="field">-->
+                                        <div class="control has-icons-left">
+<!--                                            <div class="form-group">-->
+                                                <input class="input" name="firstName" type="text" placeholder="First Name"
+                                                       required
+                                                       autofocus
+                                                       th:value="${sbUser.firstName}">
+                                                <span class="icon is-small is-left">
+                                                    <i class="fa fa-user"></i>
+                                                </span>
+<!--                                            </div>-->
+                                        </div>
+<!--                                    </div>-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Last Name: </th>
+                                <td>
+                                    <div class="control has-icons-left has-icons-right">
+                                        <input type="text" th:value="${sbUser.lastName}" name="lastName"
+                                               placeholder="Last Name"
+                                               class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Email: </th>
+                                <td>
+                                    <div class="control has-icons-left has-icons-right">
+                                        <input type="email" th:value="${sbUser.email}" name="email"
+                                               placeholder="example@example.com"
+                                               class="input" data-validation="email" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Group: </th>
+                                <td>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select name="sbGroupDto.id" th:value="${sbUser.sbGroup.id}">
+                                                <option th:each="group : ${groups}"
+                                                        th:text="${group.groupName}"
+                                                        th:value="${group.id}"
+                                                        th:selected="${sbUser.sbGroup.id == group.id}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                    <footer class="modal-card-foot">
+<!--                        color: #363636;-->
+<!--                        calc(.5em - 1px)-->
+<!--                        padding-top: 0em;-->
+                        <button type="submit" style="
+                                                    background-color: #fff;
+                                                    border-color: #dbdbdb;
+                                                    border-width: 1px;
+                                                    cursor: pointer;
+                                                    justify-content: center;
+
+                                                    padding-left: 1em;
+                                                    padding-right: 1em;
+
+
+                                                    text-align: center;
+                                                    white-space: nowrap;
+                                                    background-color: #00d1b2;
+                                                    border-color: transparent;
+                                                    color: #fff;
+                                                    -moz-appearance: none;
+                                                    -webkit-appearance: none;
+                                                    align-items: center;
+                                                    border: 1px solid transparent;
+                                                    border-radius: 4px;
+                                                    box-shadow: none;
+
+                                                    font-size: 1rem;
+                                                    height: 2.5em;
+                                                    justify-content: flex-start;
+                                                    line-height: 1.5;
+                                                    position: relative;
+                                                    vertical-align: top;"
+                                th:text="#{button.save.changes}"></button>
+                        <button type="submit" class="button is-primary"
+                                th:text="#{button.save.changes}"></button>
+                        <button class="button" type="reset"
+                                th:text="#{button.cancel}"></button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+        <!-- //Modal Edit SbUser -->
+    </body>
+</html>

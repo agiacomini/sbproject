@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = $trigger.dataset.target;
         const $target = document.getElementById(modal);
 
+
         $trigger.addEventListener('click', () => {
           openModal($target);
         });
